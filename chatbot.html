@@ -3,6 +3,11 @@
   <head>
     <title>Chatbot</title>
     <style>
+      .body{
+        font-family: Arial;
+        margin-top: 0px;
+        margin-left: 0px;
+      }
       .send-button{
         background-color: rgb(25, 135, 84);
         color: white;
@@ -22,20 +27,47 @@
       }
       .chat-input-container{
         display: flex;
+        margin-bottom: 60px;
       }
       .app-container{
         max-width: 600px;
         margin-left: auto;
         margin-right: auto;
         /* move it to center */
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
       }
       .chat-message-user{
         display: flex;
         justify-content: end;
         /* move it to right */
+        align-items: start;
       }
       .chat-message-robot{
-
+        display: flex;
+        align-items: start;
+      }
+      .chat-message-text{
+        background-color:rgb(238, 238, 238);
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-right: 10px;
+        margin-left: 10px;
+        margin-bottom: 20px;
+        max-width: 300px;
+      }
+      .chat-message-profile{
+        width: 45px;
+      }
+      .chat-messages-container{
+        flex-grow: 1;
+        margin-top: 20px;
+        overflow: scroll;
+        /* make it scrollable */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        /* for windows */
       }
     </style>
   </head>
@@ -123,19 +155,34 @@
               : 'chat-message-robot'
           }>
             {sender ==='robot' && (
-              <img src="robot.png" width="50"/>
+              <img src="robot.png" className="chat-message-profile"/>
             )}
-            {message}
+            <div className="chat-message-text">
+              {message}
+            </div>
             {sender ==='user' && (
-              <img src="user.png" width="50"/>
+              <img src="user.png" className="chat-message-profile"/>
             )}
           </div>
         );
       }
 
       function ChatMessages({chatMessages}){
+
+        const chatMessagesRef = React.useRef(null);
+        //ref = Container with special React features,to get Html
+
+        React.useEffect(() => {
+          const containerElem = chatMessagesRef.current;
+          if(containerElem){
+            containerElem.scrollTop = containerElem.scrollHeight;
+          }
+        }, [chatMessages]);
+
+
         return(
-          <>
+          <div className="chat-messages-container"
+          ref={chatMessagesRef}>
            {chatMessages.map((chatMessage) => {
               return (
                 <ChatMessage
@@ -145,7 +192,7 @@
                 />
               );
            })}
-          </>
+          </div>
         );
       }
 
@@ -175,12 +222,12 @@
 
         return(
           <div className="app-container">
+            <ChatMessages 
+            chatMessages={chatMessages}
+            />
             <ChatInput 
             chatMessages={chatMessages}
             setChatMessages={setChatMessages}
-            />
-            <ChatMessages 
-            chatMessages={chatMessages}
             />
           </div>
         );
